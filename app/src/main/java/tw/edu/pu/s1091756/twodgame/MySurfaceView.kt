@@ -25,7 +25,9 @@ class MySurfaceView(context: Context?, attrs: AttributeSet?) : SurfaceView(conte
     var Score:Int = 0  //成績
     var Shooting:Int = 0  //消失時間
 
-    lateinit var bird:Bird
+    var bird1:Bird
+    var bird2:Bird
+    var bird3:Bird
 
     init {
         surfaceHolder = getHolder()
@@ -33,7 +35,14 @@ class MySurfaceView(context: Context?, attrs: AttributeSet?) : SurfaceView(conte
         SuperMan = BitmapFactory.decodeResource(getResources(), R.drawable.superman)
         surfaceHolder.addCallback(this)
         Player = BitmapFactory.decodeResource(getResources(), R.drawable.player)
-        bird = Bird(context!!)
+        bird1 = Bird(context!!)
+        bird2 = Bird(context!!)
+        bird2.BirdY = 100
+        bird2.BirdX -= 50
+
+        bird3 = Bird(context!!)
+        bird3.BirdY = 550
+        bird3.BirdX += 50
     }
 
     override fun surfaceCreated(holder: SurfaceHolder) {
@@ -103,7 +112,9 @@ class MySurfaceView(context: Context?, attrs: AttributeSet?) : SurfaceView(conte
         paint.textSize = 50f
         canvas.drawText("Score:"+Score.toString(), 50f,50f, paint)
 
-        bird.draw(canvas)
+        bird1.draw(canvas) //把圖畫出來
+        bird2.draw(canvas)
+        bird3.draw(canvas)
     }
 
     override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {
