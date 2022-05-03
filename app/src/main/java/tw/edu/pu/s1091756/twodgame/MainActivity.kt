@@ -1,5 +1,6 @@
 package tw.edu.pu.s1091756.twodgame
 
+import android.graphics.Canvas
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.service.autofill.OnClickAction
@@ -31,7 +32,8 @@ class MainActivity : AppCompatActivity() {
                         binding.txv.text = secondsLeft.toString()
                         binding.btnStart.isEnabled = false
                         binding.btnStop.isEnabled = true
-                        delay(25)}
+                        delay(25)
+                    }
                 }
                 if(secondsLeft == 0){
                     secondsLeft = 1000
@@ -59,7 +61,12 @@ class MainActivity : AppCompatActivity() {
                 while(secondsLeft > 0) {
                     secondsLeft--
                     binding.txv.text = secondsLeft.toString()
-                    delay(25)}
+                    delay(25)
+
+                    val canvas: Canvas = binding.mysv.holder.lockCanvas()
+                    binding.mysv.drawSomething(canvas)
+                    binding.mysv.holder.unlockCanvasAndPost(canvas)
+                }
             }
         }
     }
