@@ -26,6 +26,7 @@ class MainActivity : AppCompatActivity() {
 
         binding.btnStart.setOnClickListener(object : View.OnClickListener{
             override fun onClick(v: View?) {
+                binding.mysv.Score = 0
                 job = GlobalScope.launch(Dispatchers.Main) {
                     while(secondsLeft > 0) {
                         secondsLeft--
@@ -33,6 +34,10 @@ class MainActivity : AppCompatActivity() {
                         binding.btnStart.isEnabled = false
                         binding.btnStop.isEnabled = true
                         delay(25)
+
+                        val canvas: Canvas = binding.mysv.holder.lockCanvas()
+                        binding.mysv.drawSomething(canvas)
+                        binding.mysv.holder.unlockCanvasAndPost(canvas)
                     }
                 }
                 if(secondsLeft == 0){

@@ -1,11 +1,9 @@
 package tw.edu.pu.s1091756.twodgame
 
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.Canvas
-import android.graphics.Rect
+import android.graphics.*
 import android.util.AttributeSet
+import android.view.MotionEvent
 import android.view.SurfaceHolder
 import android.view.SurfaceView
 
@@ -15,24 +13,49 @@ class MySurfaceView(context: Context?, attrs: AttributeSet?) : SurfaceView(conte
     lateinit var BG:Bitmap
     lateinit var SuperMan: Bitmap
     var BGmoveX:Int = 0
+
     var xPos:Int = 0
     var yPos:Int = 0
     var deltaX:Int = 5
     var deltaY:Int = 5
 
+    lateinit var Player:Bitmap
+    var PlayerX:Float = 0f
+    var PlayerY:Float = 0f
+    var Score:Int = 0  //成績
+    var Shooting:Int = 0  //消失時間
 
+    lateinit var bird:Bird
 
     init {
         surfaceHolder = getHolder()
         BG = BitmapFactory.decodeResource(getResources(), R.drawable.back)
         SuperMan = BitmapFactory.decodeResource(getResources(), R.drawable.superman)
-        surfaceHolder.addCallback(this)}
+        surfaceHolder.addCallback(this)
+        Player = BitmapFactory.decodeResource(getResources(), R.drawable.player)
+        bird = Bird(context!!)
+    }
 
     override fun surfaceCreated(holder: SurfaceHolder) {
         var canvas: Canvas = surfaceHolder.lockCanvas()
         drawSomething(canvas)
         surfaceHolder.unlockCanvasAndPost(canvas)
     }
+
+    override fun onTouchEvent(event: MotionEvent?): Boolean {
+        PlayerX = event!!.x
+        PlayerY = event!!.y
+        var w:Int = SuperMan.width / 6
+        var h:Int = SuperMan.height / 6
+        if ((PlayerX>=xPos) && (PlayerX<=xPos+w) && (PlayerY>=yPos) && (PlayerY<=yPos+h)){
+            Score++
+            Shooting = 10
+        }
+        PlayerX -= Player.width / 2
+        PlayerY -= Player.height / 2
+        return false
+    }
+
     fun drawSomething(canvas:Canvas) {
         //canvas.drawBitmap(BG, 0f, 0f, null)
         //背景捲動
@@ -65,7 +88,22 @@ class MySurfaceView(context: Context?, attrs: AttributeSet?) : SurfaceView(conte
 
         //var DestRect:Rect = Rect(0, 0, w, h)
         var DestRect:Rect = Rect(xPos, yPos, w + xPos, h + yPos)
-        canvas.drawBitmap(SuperMan, SrcRect, DestRect, null)
+
+        if (Shooting>0){
+            Shooting--
+        }
+        else{
+            canvas.drawBitmap(SuperMan, SrcRect, DestRect, null)
+        }
+
+        canvas.drawBitmap(Player, PlayerX, PlayerY, null)
+
+        val paint = Paint(Paint.ANTI_ALIAS_FLAG)
+        paint.color = Color.BLUE
+        paint.textSize = 50f
+        canvas.drawText("Score:"+Score.toString(), 50f,50f, paint)
+
+        bird.draw(canvas)
     }
 
     override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {
